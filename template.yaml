@@ -1,0 +1,97 @@
+---
+id: helpsquad
+tokens:
+- ref: donors
+  symbol: DONOR
+  name: Donor Membership
+  decimals: 0
+- ref: supervisors
+  symbol: SUPERVISOR
+  name: Supervisor Membership
+  decimals: 0
+- ref: vounteers
+  symbol: VOLUNTEER
+  name: Volunteer Membership
+  decimals: 0
+apps:
+- ref: donors-voting
+  type: voting
+  token: donors
+  support: 50
+  acceptance: 10
+  duration: 604800
+- ref: supervisors-voting
+  type: voting
+  token: supervisors
+  support: 50
+  acceptance: 10
+  duration: 86400
+- ref: donors-tm
+  type: token-manager
+  token: donors
+- ref: supervisors-tm
+  type: token-manager
+  token: supervisors
+- ref: vounteers-tm
+  type: token-manager
+  token: vounteers
+- type: finance
+  default: true
+  vault: agent
+  period: 2592000
+- ref: agent
+  type: agent
+  default: true
+permissions:
+- app: kernel
+  role: APP_MANAGER_ROLE
+  grantee: donors-voting
+  manager: donors-voting
+- app: acl
+  role: CREATE_PERMISSIONS_ROLE
+  grantee: donors-voting
+  manager: donors-voting
+- app: finance
+  role: CREATE_PAYMENTS_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: finance
+  role: EXECUTE_PAYMENTS_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: finance
+  role: MANAGE_PAYMENTS_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: agent
+  role: EXECUTE_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: agent
+  role: RUN_SCRIPT_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: agent
+  role: TRANSFER_ROLE
+  grantee: finance
+  manager: supervisors-voting
+- app: supervisors-tm
+  role: MINT_ROLE
+  grantee: donors-voting
+  manager: donors-voting
+- app: supervisors-tm
+  role: BURN_ROLE
+  grantee: donors-voting
+  manager: donors-voting
+- app: vounteers-tm
+  role: MINT_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: vounteers-tm
+  role: BURN_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: supervisors-voting
+  role: CREATE_VOTES_ROLE
+  grantee: volunteers-tm
+  manager: supervisors-voting
