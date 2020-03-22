@@ -23,8 +23,8 @@ apps:
 - ref: supervisors-voting
   type: voting
   token: supervisors
-  support: 50
-  acceptance: 10
+  support: 66
+  acceptance: 33
   duration: 86400
 - ref: donors-tm
   type: token-manager
