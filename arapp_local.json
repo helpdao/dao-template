@@ -1,0 +1,11 @@
+{
+  "environments": {
+    "devnet": {
+      "appName": "help-dao-template.aragonpm.eth",
+      "address": "0x5c424c8931674a5fdb955a366d6ec8af39fe0eb9",
+      "network": "devnet",
+      "registry": "0x24a7aaacbd3d1d2f11927af052b212e8047214cc"
+    }
+  },
+  "path": "contracts/HelpDaoTemplate.sol"
+}
