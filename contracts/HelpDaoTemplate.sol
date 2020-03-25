@@ -18,7 +18,17 @@ contract HelpDaoTemplate is BaseTemplate {
     uint64 SUPPORT_REQUIRED = 50 * 10**16; // 50%
     uint64 MIN_ACCEPTANCE_QUORUM = 20 * 10**16; // 20%
 
-    mapping (address => address) internal tokenCache;
+    string SUPERVISORS_TOKEN_NAME = "Supervisors";
+    string SUPERVISORS_TOKEN_SYMBOL = "SPV";
+    string DONORS_TOKEN_NAME = "Donors";
+    string DONORS_TOKEN_SYMBOL = "DNS";
+
+    struct StoredContracts {
+        address supervisorsToken;
+        address donorsToken;
+    }
+
+    mapping (address => StoredContracts) internal tokenCache;
 
     constructor(DAOFactory _daoFactory, ENS _ens, MiniMeTokenFactory _miniMeFactory, IFIFSResolvingRegistrar _aragonID)
         BaseTemplate(_daoFactory, _ens, _miniMeFactory, _aragonID)
@@ -28,32 +38,38 @@ contract HelpDaoTemplate is BaseTemplate {
         _ensureMiniMeFactoryIsValid(_miniMeFactory);
     }
 
-    function create(string _id, address _initialSupervisor) public {
+    function create(string _id, address _initialSupervisor) external {
         address[] memory members = new address[](1);
         members[0] = _initialSupervisor;
         uint64[3] memory votingSettings = [uint64(SUPPORT_REQUIRED), MIN_ACCEPTANCE_QUORUM, VOTE_DURATION];
-        this.newTokenAndInstance("Supervisors", "SPV", _id, members, votingSettings, 0, true);
+        newTokenAndInstance(_id, members, votingSettings, 0, true);
+    }
+
+    function createDao(string _id, address _initialSupervisor) external {
+        address[] memory members = new address[](1);
+        members[0] = _initialSupervisor;
+        uint64[3] memory votingSettings = [uint64(SUPPORT_REQUIRED), MIN_ACCEPTANCE_QUORUM, VOTE_DURATION];
+        newInstance(_id, members, votingSettings, 0, true);
     }
 
     function newTokenAndInstance(
-        string _tokenName,
-        string _tokenSymbol,
         string _id,
         address[] _members,
         uint64[3] _votingSettings, /* supportRequired, minAcceptanceQuorum, voteDuration */
         uint64 _financePeriod,
         bool _useAgentAsVault
     )
-        external
+        public
     {
-        newToken(_tokenName, _tokenSymbol);
-        return newInstance(_id, _members, _votingSettings, _financePeriod, _useAgentAsVault);
+        newTokens();
+        newInstance(_id, _members, _votingSettings, _financePeriod, _useAgentAsVault);
     }
 
-    function newToken(string _name, string _symbol) public returns (MiniMeToken) {
-        MiniMeToken token = _createToken(_name, _symbol, TOKEN_DECIMALS);
-        _cacheToken(token, msg.sender);
-        return token;
+    function newTokens() public returns (MiniMeToken, MiniMeToken) {
+        MiniMeToken supervisorsToken = _createToken(SUPERVISORS_TOKEN_NAME, SUPERVISORS_TOKEN_SYMBOL, TOKEN_DECIMALS);
+        MiniMeToken donorsToken = _createToken(DONORS_TOKEN_NAME, DONORS_TOKEN_SYMBOL, TOKEN_DECIMALS);
+        _cacheTokens(supervisorsToken, supervisorsToken, msg.sender);
+        return (supervisorsToken, supervisorsToken);
     }
 
     function newInstance(string _id, address[] _members, uint64[3] _votingSettings, uint64 _financePeriod, bool _useAgentAsVault)
@@ -61,14 +77,14 @@ contract HelpDaoTemplate is BaseTemplate {
     {
         require(_members.length > 0, ERROR_MISSING_MEMBERS);
         require(_votingSettings.length == 3, ERROR_BAD_VOTE_SETTINGS);
-        MiniMeToken token = _popTokenCache(msg.sender);
+        (MiniMeToken supervisorsToken, MiniMeToken donorsToken) = _popTokenCache(msg.sender);
 
         // Create DAO and install apps
         (Kernel dao, ACL acl) = _createDAO();
         Vault agentOrVault = _useAgentAsVault ? _installDefaultAgentApp(dao) : _installVaultApp(dao);
         Finance finance = _installFinanceApp(dao, agentOrVault, _financePeriod == 0 ? DEFAULT_FINANCE_PERIOD : _financePeriod);
-        TokenManager tokenManager = _installTokenManagerApp(dao, token, TOKEN_TRANSFERABLE, TOKEN_MAX_PER_ACCOUNT);
-        Voting voting = _installVotingApp(dao, token, _votingSettings[0], _votingSettings[1], _votingSettings[2]);
+        TokenManager tokenManager = _installTokenManagerApp(dao, supervisorsToken, TOKEN_TRANSFERABLE, TOKEN_MAX_PER_ACCOUNT);
+        Voting voting = _installVotingApp(dao, supervisorsToken, _votingSettings[0], _votingSettings[1], _votingSettings[2]);
 
         // Mint tokens
         _mintTokens(acl, tokenManager, _members, 1);
@@ -98,15 +114,17 @@ contract HelpDaoTemplate is BaseTemplate {
         _acl.createPermission(_voting, _tokenManager, _tokenManager.MINT_ROLE(), _voting);
     }
 
-    function _cacheToken(MiniMeToken token, address _owner) internal {
-        tokenCache[_owner] = token;
+    function _cacheTokens(MiniMeToken _supervisorsToken, MiniMeToken _donorsToken, address _owner) internal {
+        tokenCache[_owner].supervisorsToken = _supervisorsToken;
+        tokenCache[_owner].donorsToken = _donorsToken;
     }
 
-    function _popTokenCache(address _owner) internal returns (MiniMeToken) {
-        require(tokenCache[_owner] != address(0), ERROR_MISSING_TOKEN_CACHE);
+    function _popTokenCache(address _owner) internal returns (MiniMeToken, MiniMeToken) {
+        require(tokenCache[_owner].supervisorsToken != address(0), ERROR_MISSING_TOKEN_CACHE);
 
-        MiniMeToken token = MiniMeToken(tokenCache[_owner]);
+        MiniMeToken supervisorsToken = MiniMeToken(tokenCache[_owner].supervisorsToken);
+        MiniMeToken donorsToken = MiniMeToken(tokenCache[_owner].donorsToken);
         delete tokenCache[_owner];
-        return token;
+        return (supervisorsToken, donorsToken);
     }
 }

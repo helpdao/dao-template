@@ -1,6 +1,5 @@
 const HelpDaoTemplate = artifacts.require("HelpDaoTemplate")
 
-const UNIQUE_ID = "010" // Change for each new deployment
 const INITIAL_SUPERVISOR = "0xb4124cEB3451635DAcedd11767f004d8a28c6eE7"
 const NETWORK_ARG = "--network"
 
@@ -18,8 +17,15 @@ const helpDaoTemplateAddress = () => {
 
 module.exports = async (callback) => {
   try {
+    const uniqueId = new Date().getTime().toString().slice(10) // Must be different for each DAO deployed.
     const helpDaoTemplate = await HelpDaoTemplate.at(helpDaoTemplateAddress())
-    const createDaoReceipt = await helpDaoTemplate.create(UNIQUE_ID, INITIAL_SUPERVISOR);
+
+    // const newTokens = await helpDaoTemplate.newTokens()
+    // console.log("Tokens created...")
+    // const createDaoReceipt = await helpDaoTemplate.createDao(UNIQUE_ID, INITIAL_SUPERVISOR);
+
+    const createDaoReceipt = await helpDaoTemplate.create(uniqueId, INITIAL_SUPERVISOR);
+
     console.log(`DAO address: ${createDaoReceipt.logs.find(x => x.event === "DeployDao").args.dao} Gas used: ${createDaoReceipt.receipt.gasUsed}`)
   } catch (error) {
     console.log(error)
