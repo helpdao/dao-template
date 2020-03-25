@@ -1,7 +1,7 @@
 {
-  "name": "@aragon/templates-stake-capital",
+  "name": "@aragon/help-dao-template",
   "version": "1.0.0",
-  "description": "Stake Capital Aragon DAO Template",
+  "description": "Help Dao Template",
   "license": "GPL-3.0-or-later",
   "files": [
     "abi/",
@@ -38,9 +38,9 @@
     "publish:mainnet": "aragon apm publish major $(npm run deploy:mainnet | tail -n 1) --environment mainnet"
   },
   "dependencies": {
-    "@aragon/os": "4.2.0",
+    "@aragon/os": "4.3.0",
     "@aragon/id": "2.0.3",
-    "@aragon/apps-agent": "^1.0.0",
+    "@aragon/apps-agent": "2.1.0",
     "@aragon/apps-vault": "^4.1.0",
     "@aragon/apps-voting": "^2.1.0",
     "@aragon/apps-finance": "^3.0.0",
@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@aragon/test-helpers": "^2.0.0",
+    "@aragon/cli": "7.0.3",
     "eth-ens-namehash": "^2.0.8",
     "eth-gas-reporter": "^0.1.1",
     "ganache-cli": "^6.0.3",

@@ -38,61 +38,40 @@ contract HelpDaoTemplate is BaseTemplate {
         _ensureMiniMeFactoryIsValid(_miniMeFactory);
     }
 
-    function create(string _id, address _initialSupervisor) external {
-        address[] memory members = new address[](1);
-        members[0] = _initialSupervisor;
-        uint64[3] memory votingSettings = [uint64(SUPPORT_REQUIRED), MIN_ACCEPTANCE_QUORUM, VOTE_DURATION];
-        newTokenAndInstance(_id, members, votingSettings, 0, true);
-    }
-
-    function createDao(string _id, address _initialSupervisor) external {
-        address[] memory members = new address[](1);
-        members[0] = _initialSupervisor;
-        uint64[3] memory votingSettings = [uint64(SUPPORT_REQUIRED), MIN_ACCEPTANCE_QUORUM, VOTE_DURATION];
-        newInstance(_id, members, votingSettings, 0, true);
-    }
-
-    function newTokenAndInstance(
-        string _id,
-        address[] _members,
-        uint64[3] _votingSettings, /* supportRequired, minAcceptanceQuorum, voteDuration */
-        uint64 _financePeriod,
-        bool _useAgentAsVault
-    )
+    function createDaoTxOne()
         public
+        returns (MiniMeToken, MiniMeToken)
     {
-        newTokens();
-        newInstance(_id, _members, _votingSettings, _financePeriod, _useAgentAsVault);
-    }
-
-    function newTokens() public returns (MiniMeToken, MiniMeToken) {
         MiniMeToken supervisorsToken = _createToken(SUPERVISORS_TOKEN_NAME, SUPERVISORS_TOKEN_SYMBOL, TOKEN_DECIMALS);
         MiniMeToken donorsToken = _createToken(DONORS_TOKEN_NAME, DONORS_TOKEN_SYMBOL, TOKEN_DECIMALS);
         _cacheTokens(supervisorsToken, supervisorsToken, msg.sender);
         return (supervisorsToken, supervisorsToken);
     }
 
-    function newInstance(string _id, address[] _members, uint64[3] _votingSettings, uint64 _financePeriod, bool _useAgentAsVault)
+    function createDaoTxTwo(string _id, address _initialSupervisor)
         public
+        returns (Kernel)
     {
-        require(_members.length > 0, ERROR_MISSING_MEMBERS);
-        require(_votingSettings.length == 3, ERROR_BAD_VOTE_SETTINGS);
+        address[] memory members = new address[](1);
+        members[0] = _initialSupervisor;
+        uint64[3] memory votingSettings = [uint64(SUPPORT_REQUIRED), MIN_ACCEPTANCE_QUORUM, VOTE_DURATION];
+
+        require(members.length > 0, ERROR_MISSING_MEMBERS);
+        require(votingSettings.length == 3, ERROR_BAD_VOTE_SETTINGS);
         (MiniMeToken supervisorsToken, MiniMeToken donorsToken) = _popTokenCache(msg.sender);
 
         // Create DAO and install apps
         (Kernel dao, ACL acl) = _createDAO();
-        Vault agentOrVault = _useAgentAsVault ? _installDefaultAgentApp(dao) : _installVaultApp(dao);
-        Finance finance = _installFinanceApp(dao, agentOrVault, _financePeriod == 0 ? DEFAULT_FINANCE_PERIOD : _financePeriod);
+        Vault agentOrVault = _installDefaultAgentApp(dao);
+        Finance finance = _installFinanceApp(dao, agentOrVault, DEFAULT_FINANCE_PERIOD);
         TokenManager tokenManager = _installTokenManagerApp(dao, supervisorsToken, TOKEN_TRANSFERABLE, TOKEN_MAX_PER_ACCOUNT);
-        Voting voting = _installVotingApp(dao, supervisorsToken, _votingSettings[0], _votingSettings[1], _votingSettings[2]);
+        Voting voting = _installVotingApp(dao, supervisorsToken, votingSettings[0], votingSettings[1], votingSettings[2]);
 
         // Mint tokens
-        _mintTokens(acl, tokenManager, _members, 1);
+        _mintTokens(acl, tokenManager, members, 1);
 
         // Set up permissions
-        if (_useAgentAsVault) {
-            _createAgentPermissions(acl, Agent(agentOrVault), voting, voting);
-        }
+        _createAgentPermissions(acl, Agent(agentOrVault), voting, voting);
         _createVaultPermissions(acl, agentOrVault, finance, voting);
         _createFinancePermissions(acl, finance, voting, voting);
         _createEvmScriptsRegistryPermissions(acl, voting, voting);
@@ -101,6 +80,8 @@ contract HelpDaoTemplate is BaseTemplate {
         _transferRootPermissionsFromTemplateAndFinalizeDAO(dao, voting);
 
         _registerID(_id, dao);
+
+        return dao;
     }
 
     function _createCustomVotingPermissions(ACL _acl, Voting _voting, TokenManager _tokenManager) internal {

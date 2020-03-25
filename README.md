@@ -35,7 +35,7 @@ $ npx aragon start
 $ npm run deploy:rpc
 ```
 
-5) Create a new Help Dao on the devchain (for subsequent executions, the `UNIQUE_ID` constant must be changed to an unused ID):
+5) Create a new Help Dao on the devchain:
 ```
 $ npx truffle exec scripts/new-dao.js --network rpc
 ```
