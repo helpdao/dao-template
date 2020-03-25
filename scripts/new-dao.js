@@ -21,11 +21,10 @@ module.exports = async (callback) => {
     const helpDaoTemplate = await HelpDaoTemplate.at(helpDaoTemplateAddress())
 
     const createDaoTxOneReceipt = await helpDaoTemplate.createDaoTxOne()
-    console.log(`Tx One Completed. Gas used: ${createDaoTxOneReceipt.receipt.gasUsed}`)
+    console.log(`Tx one gas used: ${createDaoTxOneReceipt.receipt.gasUsed}`)
 
     const createDaoTxTwoReceipt = await helpDaoTemplate.createDaoTxTwo(uniqueId, INITIAL_SUPERVISOR);
-
-    console.log(`DAO address: ${createDaoTxTwoReceipt.logs.find(x => x.event === "DeployDao").args.dao} Gas used: ${createDaoTxTwoReceipt.receipt.gasUsed}`)
+    console.log(`Tx two gas used: ${createDaoTxTwoReceipt.receipt.gasUsed} DAO address: ${createDaoTxTwoReceipt.logs.find(x => x.event === "DeployDao").args.dao} `)
   } catch (error) {
     console.log(error)
   }
