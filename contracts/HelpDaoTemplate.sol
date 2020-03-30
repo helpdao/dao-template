@@ -8,9 +8,9 @@ contract HelpDaoTemplate is BaseTemplate {
     string constant private ERROR_INITIAL_SUPERVISOR = "MEMBERSHIP_INITIAL_SUPERVISOR";
     string constant private ERROR_ARAGON_ID_NOT_PROVIDED = "MEMBERSHIP_ARAGON_ID_NOT_PROVIDED";
 
-    uint64 constant private SUPPORT_REQUIRED = 50 * 10**16; // 50%
-    uint64 constant private MIN_ACCEPTANCE_QUORUM = 20 * 10**16; // 20%
-    uint64 constant private VOTE_DURATION = 60 * 60 * 24 * 7; // 1 week
+    uint64 constant private SUPPORT_REQUIRED = 80 * 10**16; // 80%
+    uint64 constant private MIN_ACCEPTANCE_QUORUM = 50 * 10**16; // 50%
+    uint64 constant private VOTE_DURATION = 60 * 60 * 24; // 1 day
 
     string constant private SUPERVISORS_TOKEN_NAME = "Supervisors";
     string constant private SUPERVISORS_TOKEN_SYMBOL = "SPV";
