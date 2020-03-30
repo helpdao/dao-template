@@ -25,12 +25,12 @@ apps:
 permissions:
 - app: kernel
   role: APP_MANAGER_ROLE
-  grantee: donors-voting
-  manager: donors-voting
+  grantee: supervisors-voting
+  manager: supervisors-voting
 - app: acl
   role: CREATE_PERMISSIONS_ROLE
-  grantee: donors-voting
-  manager: donors-voting
+  grantee: supervisors-voting
+  manager: supervisors-voting
 - app: evmScriptRegistry
   role: REGISTRY_MANAGER_ROLE
   grantee: supervisors-voting
