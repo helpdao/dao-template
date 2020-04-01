@@ -1,40 +1,20 @@
 ---
 id: helpsquad
 tokens:
-- ref: donors
-  symbol: DONOR
-  name: Donor Membership
-  decimals: 0
 - ref: supervisors
   symbol: SUPERVISOR
   name: Supervisor Membership
   decimals: 0
-- ref: vounteers
-  symbol: VOLUNTEER
-  name: Volunteer Membership
-  decimals: 0
 apps:
-- ref: donors-voting
-  type: voting
-  token: donors
-  support: 50
-  acceptance: 10
-  duration: 604800
 - ref: supervisors-voting
   type: voting
   token: supervisors
   support: 66
   acceptance: 33
   duration: 86400
-- ref: donors-tm
-  type: token-manager
-  token: donors
 - ref: supervisors-tm
   type: token-manager
   token: supervisors
-- ref: vounteers-tm
-  type: token-manager
-  token: vounteers
 - type: finance
   default: true
   vault: agent
@@ -45,12 +25,20 @@ apps:
 permissions:
 - app: kernel
   role: APP_MANAGER_ROLE
-  grantee: donors-voting
-  manager: donors-voting
+  grantee: supervisors-voting
+  manager: supervisors-voting
 - app: acl
   role: CREATE_PERMISSIONS_ROLE
-  grantee: donors-voting
-  manager: donors-voting
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: evmScriptRegistry
+  role: REGISTRY_MANAGER_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: evmScriptRegistry
+  role: REGISTRY_ADD_EXECUTOR_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
 - app: finance
   role: CREATE_PAYMENTS_ROLE
   grantee: supervisors-voting
@@ -77,21 +65,22 @@ permissions:
   manager: supervisors-voting
 - app: supervisors-tm
   role: MINT_ROLE
-  grantee: donors-voting
-  manager: donors-voting
-- app: supervisors-tm
-  role: BURN_ROLE
-  grantee: donors-voting
-  manager: donors-voting
-- app: vounteers-tm
-  role: MINT_ROLE
   grantee: supervisors-voting
   manager: supervisors-voting
-- app: vounteers-tm
+- app: supervisors-tm
   role: BURN_ROLE
   grantee: supervisors-voting
   manager: supervisors-voting
 - app: supervisors-voting
   role: CREATE_VOTES_ROLE
-  grantee: volunteers-tm
+  grantee: supervisors-tm
   manager: supervisors-voting
+- app: supervisors-voting
+  role: MODIFY_QUORUM_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+- app: supervisors-voting
+  role: MODIFY_SUPPORT_ROLE
+  grantee: supervisors-voting
+  manager: supervisors-voting
+
