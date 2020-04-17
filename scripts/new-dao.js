@@ -9,6 +9,9 @@ const helpDaoTemplateAddress = () => {
   if (network() === "rinkeby") {
     const Arapp = require("../arapp")
     return Arapp.environments.rinkeby.address
+  } else if (network() === "mainnet") {
+    const Arapp = require("../arapp")
+    return Arapp.environments.mainnet.address
   } else {
     const Arapp = require("../arapp_local")
     return Arapp.environments.devnet.address

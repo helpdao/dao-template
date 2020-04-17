@@ -73,7 +73,7 @@ module.exports = {
       network_id: 1,
       provider: providerForNetwork('mainnet'),
       gas: 7.9e6,
-      gasPrice: 3000000001
+      gasPrice: 8000000001
     },
     ropsten: {
       network_id: 3,
@@ -83,7 +83,7 @@ module.exports = {
     rinkeby: {
       network_id: 4,
       provider: providerForNetwork('rinkeby'),
-      gas: 6.9e6,
+      gas: 7.9e6,
       gasPrice: 15000000001
     },
     kovan: {
