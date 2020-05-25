@@ -50,6 +50,7 @@ contract HelpDaoTemplate is BaseTemplate {
         _createAgentPermissions(acl, Agent(agentOrVault), voting, voting);
         _createVaultPermissions(acl, agentOrVault, finance, voting);
         _createFinancePermissions(acl, finance, voting, voting);
+        _createFinanceCreatePaymentsPermission(acl, finance, voting, voting);
         _createEvmScriptsRegistryPermissions(acl, voting, voting);
         _createCustomVotingPermissions(acl, voting, tokenManager);
         _createCustomTokenManagerPermissions(acl, tokenManager, voting);
