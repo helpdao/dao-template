@@ -2,13 +2,13 @@
   "environments": {
     "rinkeby": {
       "appName": "help-dao-template.aragonpm.eth",
-      "address": "0xd0798582fb6d2a2e7fdb562868e28798d59d0c48",
+      "address": "0x7dc048743dc198184fb73cfcd3dbca71ac60e7c4",
       "network": "rinkeby",
       "registry": "0x98Df287B6C145399Aaa709692c8D308357bC085D"
     },
     "mainnet": {
       "appName": "help-dao-template.aragonpm.eth",
-      "address": "0xab5a11b8ad1276e8d079a771fc8eaa17fb3d263d",
+      "address": "0xbd060d1701ade4197b17b2ed5732a58353c4103c",
       "network": "mainnet",
       "registry": "0x314159265dd8dbb310642f98f50c066173c1259b"
     }

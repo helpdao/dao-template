@@ -73,7 +73,7 @@ module.exports = {
       network_id: 1,
       provider: providerForNetwork('mainnet'),
       gas: 7.9e6,
-      gasPrice: 8000000001
+      gasPrice: 25000000001
     },
     ropsten: {
       network_id: 3,
